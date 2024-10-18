@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BlogRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,6 +28,20 @@ class Blog
     #[ORM\ManyToOne(targetEntity: Category::class)]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id')]
     private Category|null $category = null;
+  
+  
+  /**
+   * @var Collection
+   */
+  #[ORM\JoinTable(name: 'tags_to_blog')]
+  #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+  #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id', unique: true)]
+  #[ORM\ManyToMany(targetEntity: Tag::class)]
+  private Collection $tags;
+  
+  public function __construct() {
+    $this->tags = new ArrayCollection();
+  }
 
     public function getId(): ?int
     {
@@ -78,5 +94,25 @@ class Blog
     $this->category = $category;
     
     return $this;
+  }
+  
+  
+  public function getTags(): Collection
+  {
+    return $this->tags;
+  }
+  
+  public function setTags(Collection $tags): static
+  {
+    $this->tags = $tags;
+    
+    return $this;
+  }
+  
+  public function addTag(Tag $tag): void
+  {
+    if (!$this->tags->contains($tag)) {
+      $this->tags[] = $tag;
+    }
   }
 }

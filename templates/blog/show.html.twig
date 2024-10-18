@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block title %}Blog{% endblock %}
 
@@ -25,14 +25,19 @@
             </tr>
             <tr>
                 <th>Category</th>
-                <td>{{ blog.category.name }}</td>
+                <td>
+                    {% if blog.category %}
+                        {{ blog.category.fullName | lower }}
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_blog_index') }}">back to list</a>
+    <br>
+    <a href="{{ path('app_blog_index') }}" class="btn btn-warning">back to list</a>
 
-    <a href="{{ path('app_blog_edit', {'id': blog.id}) }}">edit</a>
+    <a href="{{ path('app_blog_edit', {'id': blog.id}) }}" class="btn btn-primary">edit</a>
 
     {{ include('blog/_delete_form.html.twig') }}
 {% endblock %}
